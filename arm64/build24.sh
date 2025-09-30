@@ -29,13 +29,13 @@ fi
 # 输出调试信息
 echo "$(date '+%Y-%m-%d %H:%M:%S') - 开始构建固件..."
 
-# ============= iStoreOS仓库内的插件==============
-# 定义所需安装的包列表 下列插件你都可以自行删减
+# ============= iStoreOS 24.10 官方集成插件===================
+# ============= 若启用 则打开注释 ============================
 
-# 初始化变量
+# 定义初始化变量
 PACKAGES=""
 
-# 官方集成列表
+# iStoreOS官方集成列表，若启用则打开注释
 #PACKAGES="$PACKAGES adb"                          # Android调试桥，用于与Android设备通信调试（未启用）
 #PACKAGES="$PACKAGES adb-enablemodem"              # 启用ADB调制解调器模式的工具（未启用）
 #PACKAGES="$PACKAGES appfilter"                    # 应用过滤工具（未启用）
@@ -75,10 +75,13 @@ PACKAGES="$PACKAGES dbus"                         # D-Bus消息总线系统
 PACKAGES="$PACKAGES dkml"                         # DKMS内核模块管理工具
 PACKAGES="$PACKAGES -dnsmasq"                     # 移除轻量DNS服务器dnsmasq
 PACKAGES="$PACKAGES dnsmasq-full"                 # 全功能DNS服务器和DHCP服务器
-PACKAGES="$PACKAGES docker"                       # Docker容器引擎
-PACKAGES="$PACKAGES docker-compose"               # Docker容器编排工具
-PACKAGES="$PACKAGES dockerd"                      # Docker守护进程
+if [ "$INCLUDE_DOCKER" = "yes" ]; then
+    PACKAGES="$PACKAGES docker"                       # Docker容器引擎
+    PACKAGES="$PACKAGES docker-compose"               # Docker容器编排工具
+    PACKAGES="$PACKAGES dockerd"                      # Docker守护进程
+fi
 PACKAGES="$PACKAGES dropbear"                     # 轻量级SSH服务器
+PACKAGES="$PACKAGES ds-lite"
 PACKAGES="$PACKAGES e100-firmware"                # Intel E100系列网卡固件
 PACKAGES="$PACKAGES e2fsprogs"                    # Ext系列文件系统工具
 PACKAGES="$PACKAGES edgeport-firmware"            # Edgeport串口设备固件
@@ -100,7 +103,9 @@ PACKAGES="$PACKAGES htop"                         # 交互式系统监控工具
 PACKAGES="$PACKAGES ip-full"                      # 全功能IP配置工具
 PACKAGES="$PACKAGES ip6tables-nft"                # IPv6的nftables防火墙工具
 PACKAGES="$PACKAGES iperf3"                       # 网络带宽测试工具
+PACKAGES="$PACKAGES ipip"
 PACKAGES="$PACKAGES ipset"                        # IP集合管理工具，用于防火墙规则
+PACKAGES="$PACKAGES iptables-mod-conntrack-extra"
 PACKAGES="$PACKAGES iptables-mod-extra"           # iptables额外模块
 PACKAGES="$PACKAGES iptables-nft"                 # 基于nftables的iptables工具
 PACKAGES="$PACKAGES istoreos-files"               # iStoreOS系统文件
@@ -274,6 +279,7 @@ PACKAGES="$PACKAGES kmod-ipip"                    # IPIP隧道驱动模块
 PACKAGES="$PACKAGES kmod-ipsec"                   # IPsec核心驱动模块
 PACKAGES="$PACKAGES kmod-ipsec4"                  # IPv4 IPsec驱动模块
 PACKAGES="$PACKAGES kmod-ipsec6"                  # IPv6 IPsec驱动模块
+PACKAGES="$PACKAGES kmod-ipvlan"
 PACKAGES="$PACKAGES kmod-ipt-conntrack"           # iptables连接跟踪驱动模块
 PACKAGES="$PACKAGES kmod-ipt-conntrack-extra"     # iptables额外连接跟踪驱动模块
 PACKAGES="$PACKAGES kmod-ipt-core"                # iptables核心驱动模块
@@ -662,6 +668,7 @@ PACKAGES="$PACKAGES libdevmapper"                 # 设备映射器库
 PACKAGES="$PACKAGES libe2p2"                      # e2p库
 PACKAGES="$PACKAGES libelf1"                      # ELF格式库
 PACKAGES="$PACKAGES libevdev"                     # evdev输入设备库
+PACKAGES="$PACKAGES libevent2-7"
 PACKAGES="$PACKAGES libexpat"                     # Expat XML解析库
 PACKAGES="$PACKAGES libext2fs2"                   # Ext2文件系统库
 PACKAGES="$PACKAGES libf2fs6"                     # F2FS文件系统库
@@ -759,12 +766,15 @@ PACKAGES="$PACKAGES luci-app-cpufreq"             # CPU频率控制应用
 #PACKAGES="$PACKAGES luci-app-ddns"                # DDNS应用（未启用）
 #PACKAGES="$PACKAGES luci-app-ddnsto"              # DDNSTO应用（未启用）
 PACKAGES="$PACKAGES luci-app-diskman"             # 磁盘管理应用
-PACKAGES="$PACKAGES luci-app-dockerman"           # Docker管理应用
+if [ "$INCLUDE_DOCKER" = "yes" ]; then
+    PACKAGES="$PACKAGES luci-app-dockerman"           # Docker管理应用
+fi
 PACKAGES="$PACKAGES luci-app-fan"                 # 风扇控制应用
 #PACKAGES="$PACKAGES luci-app-filetransfer"        # 文件传输应用（未启用）
 PACKAGES="$PACKAGES luci-app-firewall"            # 防火墙应用
 #PACKAGES="$PACKAGES luci-app-hd-idle"             # 硬盘休眠应用（未启用）
 #PACKAGES="$PACKAGES luci-app-linkease"            # LinkEase应用（未启用）
+#PACKAGES="$PACKAGES luci-app-mergerfs"
 PACKAGES="$PACKAGES luci-app-nfs"                 # NFS应用
 #PACKAGES="$PACKAGES luci-app-oaf"                 # OAF应用（未启用）
 #PACKAGES="$PACKAGES luci-app-ota"                 # OTA升级应用（未启用）
@@ -786,12 +796,15 @@ PACKAGES="$PACKAGES luci-i18n-cpufreq-zh-cn"      # CPU频率控制中文语言�
 #PACKAGES="$PACKAGES luci-i18n-ddns-zh-cn"         # DDNS中文语言包（未启用）
 #PACKAGES="$PACKAGES luci-i18n-ddnsto-zh-cn"       # DDNSTO中文语言包（未启用）
 PACKAGES="$PACKAGES luci-i18n-diskman-zh-cn"      # 磁盘管理中文语言包
-PACKAGES="$PACKAGES luci-i18n-dockerman-zh-cn"    # Docker管理中文语言包
+if [ "$INCLUDE_DOCKER" = "yes" ]; then
+    PACKAGES="$PACKAGES luci-i18n-dockerman-zh-cn"    # Docker管理中文语言包
+fi
 PACKAGES="$PACKAGES luci-i18n-fan-zh-cn"          # 风扇控制中文语言包
 #PACKAGES="$PACKAGES luci-i18n-filetransfer-zh-cn" # 文件传输中文语言包（未启用）
 PACKAGES="$PACKAGES luci-i18n-firewall-zh-cn"     # 防火墙中文语言包
 #PACKAGES="$PACKAGES luci-i18n-hd-idle-zh-cn"      # 硬盘休眠中文语言包（未启用）
 #PACKAGES="$PACKAGES luci-i18n-linkease-zh-cn"     # LinkEase中文语言包（未启用）
+#PACKAGES="$PACKAGES luci-i18n-mergerfs-zh-cn"
 PACKAGES="$PACKAGES luci-i18n-nfs-zh-cn"          # NFS中文语言包
 #PACKAGES="$PACKAGES luci-i18n-oaf-zh-cn"          # OAF中文语言包（未启用）
 #PACKAGES="$PACKAGES luci-i18n-ota-zh-cn"          # OTA升级中文语言包（未启用）
@@ -803,7 +816,9 @@ PACKAGES="$PACKAGES luci-i18n-unishare-zh-cn"     # UniShare中文语言包
 PACKAGES="$PACKAGES luci-i18n-upnp-zh-cn"         # UPnP中文语言包
 PACKAGES="$PACKAGES luci-i18n-wol-zh-cn"          # 网络唤醒中文语言包
 PACKAGES="$PACKAGES luci-lib-base"                # Luci基础库
-PACKAGES="$PACKAGES luci-lib-docker"              # Luci Docker库
+if [ "$INCLUDE_DOCKER" = "yes" ]; then
+    PACKAGES="$PACKAGES luci-lib-docker"              # Luci Docker库
+fi
 #PACKAGES="$PACKAGES luci-lib-fs"                  # Luci文件系统库
 PACKAGES="$PACKAGES luci-lib-ip"                  # Luci IP库
 PACKAGES="$PACKAGES luci-lib-ipkg"                # Luci IPKG库
@@ -811,6 +826,7 @@ PACKAGES="$PACKAGES luci-lib-jsonc"               # Luci JSON-C库
 PACKAGES="$PACKAGES luci-lib-mac-vendor"          # Luci MAC厂商库
 PACKAGES="$PACKAGES luci-lib-nixio"               # Luci NixIO库
 PACKAGES="$PACKAGES luci-lib-taskd"               # Luci任务库
+PACKAGES="$PACKAGES luci-lib-uqr"
 PACKAGES="$PACKAGES luci-lib-xterm"               # Luci Xterm库
 PACKAGES="$PACKAGES luci-light"                   # 轻量版Luci
 PACKAGES="$PACKAGES luci-lua-runtime"             # Luci Lua运行时
@@ -821,6 +837,7 @@ PACKAGES="$PACKAGES luci-mod-system"              # 系统模块
 #PACKAGES="$PACKAGES luci-proto-3g"                # 3G协议支持（未启用）
 PACKAGES="$PACKAGES luci-proto-external"          # 外部协议支持
 PACKAGES="$PACKAGES luci-proto-gre"               # GRE协议支持
+PACKAGES="$PACKAGES luci-proto-ipip"
 PACKAGES="$PACKAGES luci-proto-ipv6"              # IPv6协议支持
 #PACKAGES="$PACKAGES luci-proto-mbim"              # MBIM协议支持（未启用）
 #PACKAGES="$PACKAGES luci-proto-modemmanager"      # ModemManager协议支持（未启用）
@@ -828,11 +845,15 @@ PACKAGES="$PACKAGES luci-proto-ipv6"              # IPv6协议支持
 PACKAGES="$PACKAGES luci-proto-ppp"               # PPP协议支持
 #PACKAGES="$PACKAGES luci-proto-qmi"               # QMI协议支持（未启用）
 PACKAGES="$PACKAGES luci-proto-relay"             # 中继协议支持
+PACKAGES="$PACKAGES luci-proto-sstp"
 #PACKAGES="$PACKAGES luci-proto-unet"              # UniNet协议支持
+#PACKAGES="$PACKAGES luci-proto-wireguard"
 PACKAGES="$PACKAGES luci-ssl-openssl"             # OpenSSL的Luci SSL支持
 PACKAGES="$PACKAGES luci-theme-argon"             # Argon主题
 PACKAGES="$PACKAGES luci-theme-bootstrap"         # Bootstrap主题
+PACKAGES="$PACKAGES map"
 PACKAGES="$PACKAGES mdadm"                        # RAID管理工具
+#PACKAGES="$PACKAGES mergerfs"
 PACKAGES="$PACKAGES miniupnpd-nftables"           # NFTables的MiniUPnPd
 PACKAGES="$PACKAGES mkf2fs"                       # F2FS文件系统创建工具
 #PACKAGES="$PACKAGES modemmanager"                 # 调制解调器管理器（未启用）
@@ -964,6 +985,7 @@ PACKAGES="$PACKAGES shadow-utils"                 # Shadow工具集
 PACKAGES="$PACKAGES shadow-vipw"                  # 编辑密码文件工具
 PACKAGES="$PACKAGES smartd"                       # S.M.A.R.T.监控守护进程
 PACKAGES="$PACKAGES smartmontools"                # S.M.A.R.T.工具集
+PACKAGES="$PACKAGES sstp-client"
 #PACKAGES="$PACKAGES strace"                       # 系统调用跟踪工具（未启用）
 PACKAGES="$PACKAGES swap-utils"                   # 交换分区工具
 PACKAGES="$PACKAGES sysfsutils"                   # sysfs工具集
@@ -1007,6 +1029,7 @@ PACKAGES="$PACKAGES usign"                        # 签名工具
 PACKAGES="$PACKAGES webdav2"                      # WebDAV服务器
 PACKAGES="$PACKAGES wget-ssl"                     # 带SSL支持的wget
 PACKAGES="$PACKAGES wifi-scripts"                 # 无线脚本
+#PACKAGES="$PACKAGES wireguard-tools"
 PACKAGES="$PACKAGES wireless-regdb"               # 无线 regulatory 数据库
 PACKAGES="$PACKAGES wpa-cli"                      # WPA命令行工具
 PACKAGES="$PACKAGES wpa-supplicant-openssl"       # 带OpenSSL的WPA客户端
@@ -1019,29 +1042,19 @@ PACKAGES="$PACKAGES zlib"                         # zlib压缩库
 PACKAGES="$PACKAGES zram-swap"                    # ZRAM交换工具
 PACKAGES="$PACKAGES -libustream-mbedtls"          # 移除mbedtls的ustream库
 
-# O大打包脚本补充依赖，其他依赖官方列表有集成
+# 固件打包脚本必要依赖，其他依赖官方列表已集成
 PACKAGES="$PACKAGES perlbase-time"
 
-# 斐讯N1无线：无线问题未解决一般也用不上，故禁用；iw和iwinfo官方列表有集成
-#PACKAGES="$PACKAGES kmod-brcmfmac"
-#PACKAGES="$PACKAGES wpad-basic-mbedtls"
-#PACKAGES="$PACKAGES iw"
-#PACKAGES="$PACKAGES iwinfo"
+# 斐讯N1无线：此固件未考虑无线，需自行研究；其中iw和iwinfo官方列表已集成
+#PACKAGES="$PACKAGES kmod-brcmfmac wpad-basic-mbedtls"
 
 # file/packages目录的第三方可选插件
-PACKAGES="$PACKAGES filebrowser"
-PACKAGES="$PACKAGES luci-app-filebrowser-go"
-PACKAGES="$PACKAGES luci-i18n-filebrowser-go-zh-cn"
-PACKAGES="$PACKAGES luci-app-amlogic"
-PACKAGES="$PACKAGES luci-i18n-amlogic-zh-cn"
-PACKAGES="$PACKAGES lucky"
-PACKAGES="$PACKAGES luci-app-lucky"
-PACKAGES="$PACKAGES luci-i18n-lucky-zh-cn"
-PACKAGES="$PACKAGES openlist2"
-PACKAGES="$PACKAGES luci-app-openlist2"
-PACKAGES="$PACKAGES luci-i18n-openlist2-zh-cn"
-PACKAGES="$PACKAGES luci-app-ramfree"
-PACKAGES="$PACKAGES luci-i18n-ramfree-zh-cn"
+PACKAGES="$PACKAGES filebrowser luci-app-filebrowser-go luci-i18n-filebrowser-go-zh-cn"
+PACKAGES="$PACKAGES luci-app-amlogic luci-i18n-amlogic-zh-cn"
+PACKAGES="$PACKAGES lucky luci-app-lucky luci-i18n-lucky-zh-cn"
+PACKAGES="$PACKAGES openlist2 luci-app-openlist2 luci-i18n-openlist2-zh-cn"
+PACKAGES="$PACKAGES luci-app-ramfree luci-i18n-ramfree-zh-cn"
+PACKAGES="$PACKAGES luci-app-adguardhome luci-i18n-adguardhome-zh-cn"
 
 # opc-rely依赖，其他会自动集成
 PACKAGES="$PACKAGES ruby ruby-pstore ruby-psych ruby-yaml"
@@ -1049,11 +1062,9 @@ PACKAGES="$PACKAGES ruby ruby-pstore ruby-psych ruby-yaml"
 # 追加自定义包
 PACKAGES="$PACKAGES $CUSTOM_PACKAGES"
 
-
 # 构建镜像
 echo "开始构建......打印所有包名===="
 echo "$PACKAGES"
-
 
 # 开始构建
 make image PROFILE=generic PACKAGES="$PACKAGES" FILES="files"

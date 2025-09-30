@@ -6,10 +6,10 @@ on:
       openwrt_board:
         description: "请选择设备型号"
         required: true
-        default: "station-m2_tvi3315a_jp-tvbox_wxy-oect_fine3399"
+        default: "a311d-oes_s905d_wxy-oect_jp-tvbox_s922x-oes-plus_fine3399_sv-33a6x_dg3399_dg-tn3568_smart-am40_smart-am60_sw799"
         type: choice
         options:
-          - station-m2_tvi3315a_jp-tvbox_wxy-oect_fine3399
+          - a311d-oes_s905d_wxy-oect_jp-tvbox_s922x-oes-plus_fine3399_sv-33a6x_dg3399_dg-tn3568_smart-am40_smart-am60_sw799
           - a311d
           - a311d-oes
           - alark35-3500
@@ -57,6 +57,7 @@ on:
           - rk3318-box
           - rock5b
           - rock5c
+          - rp-rk3568
           - ruisen-box
           - s905
           - s905-beelink-mini
@@ -158,6 +159,7 @@ on:
           - tqc-a01
           - tvi3315a
           - vplus
+          - wocyber-a3
           - wxy-oect
           - wxy-oect-replaced
           - xiaobao
