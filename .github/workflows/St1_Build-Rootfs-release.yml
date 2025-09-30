@@ -13,11 +13,11 @@ on:
       ipaddr:
         description: '请输入管理IP（静态地址时必填）'
         required: true
-        default: '192.168.1.88'
+        default: '192.168.5.88'
       gateway:
         description: '请输入默认网关（静态地址时必填）'
         required: true
-        default: '192.168.1.1'
+        default: '192.168.5.1'
       include_docker:
         description: "是否集成Docker插件"
         required: true
@@ -48,8 +48,8 @@ jobs:
            echo "删除网络设置-dhcp"
            sed -i '44,105d' "$CONFIG_PATH"
            echo "替换默认配置"
-           sed -i "/ipaddr/s/192.168.1.88/${{ inputs.ipaddr }}/g" "$CONFIG_PATH"
-           sed -i "/gateway/s/192.168.1.1/${{ inputs.gateway }}/g" "$CONFIG_PATH"
+           sed -i "/ipaddr/s/192.168.5.88/${{ inputs.ipaddr }}/g" "$CONFIG_PATH"
+           sed -i "/gateway/s/192.168.5.1/${{ inputs.gateway }}/g" "$CONFIG_PATH"
         else
            echo "删除网络设置-static"
            sed -i '36,42d' "$CONFIG_PATH"
@@ -114,7 +114,7 @@ jobs:
     - name: 🚀 上传到 Release
       uses: softprops/action-gh-release@v2.2.1
       with:
-        tag_name: iStoreOS-24.10-RELEASE-${{ inputs.network_settings }}-$(date +%Y%m%d)
+        tag_name: iStoreOS-24.10-RELEASE-${{ inputs.network_settings }}
         body: |
           📌 版本： iStoreOS-24.10.2-RELEASE（imagebuilder构建，稳定版）
           
@@ -131,7 +131,5 @@ jobs:
           🌐 IP： ${{ inputs.network_settings == 'static' && inputs.ipaddr || '单网口-动态获取（从上级路由找寻）；多网口-IP：192.168.100.1' }}
         files: |
           imagebuilder/bin/targets/armsr/armv8/*generic-rootfs.tar.gz
-        draft: false
-        prerelease: false
       #env:
-          ##GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      #    GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
